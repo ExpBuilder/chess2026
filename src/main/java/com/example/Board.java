@@ -63,7 +63,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
 
-        //TO BE IMPLEMENTED FIRST
     
         for (int row = 0; row < 8; row++){
             for (int col = 0; col < 8; col++){
@@ -86,17 +85,15 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     }
 
     
-	//set up the board such that the black pieces are on one side and the white pieces are on the other.
-	//since we only have one kind of piece for now you need only set the same number of pieces on either side.
-	//it's up to you how you wish to arrange your pieces.
+	// Board set up
     void initializePieces() {
     	// White pieces
-    	board[0][1].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
-        board[0][6].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
+    	board[7][1].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
+        board[7][6].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
 
         // Black pieces
-        board[7][1].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
-        board[7][6].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
+        board[0][1].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
+        board[0][6].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
     }
 
     public Square[][] getSquareArray() {
@@ -168,27 +165,29 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         repaint();
     }
 
-    //TO BE IMPLEMENTED!
-    //should move the piece to the desired location only if this is a legal move.
-    //use the pieces "legal move" function to determine if this move is legal, then complete it by
-    //moving the new piece to it's new board location. 
+    // Pre-condition: The mouse is released
+    // Post-condition: If the user moved a piece to a valid square in a legal manner, the selected piece shall move to the selected square. The turn will also change if the move legal
     @Override
     public void mouseReleased(MouseEvent e) {
         Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
         
-        //using currPiece
-        if (fromMoveSquare != null && currPiece != null) {
-            if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) {
+        
+        if (fromMoveSquare != null && currPiece != null) { // Move only to square if there actually is a square and the user is actually holding a piece
+            if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) { // Move only if the end square can legally be moved to by the piece 
+                // Moves the piece
                 endSquare.put(currPiece);
                 fromMoveSquare.removePiece();
 
+                // Changes the turn
                 whiteTurn = !whiteTurn;
             }
         }
 
+        // Unhides piece (for display if it wasn't moved)
         fromMoveSquare.setDisplay(true);
         currPiece = null;
 
+        // Clear all previous indicators 
         for (Square[] row : board) {
             for (Square s : row) s.setBorder(null);
         }
