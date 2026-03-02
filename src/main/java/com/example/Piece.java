@@ -46,21 +46,49 @@ public class Piece {
     }
     
     
-    // TO BE IMPLEMENTED!
+    // FINISHED
     //return a list of every square that is "controlled" by this piece. A square is controlled
     //if the piece capture into it legally.
     public ArrayList<Square> getControlledSquares(Square[][] board, Square start) {
-     return null;
+        int x = start.getCol();
+        int y = start.getRow();
+
+        ArrayList<Square> controlledSquares = new ArrayList<Square> ();
+
+        System.out.println("Original: " + x + " " + y);
+
+        if (validMove(y + 1, x + 2)) controlledSquares.add(board[y + 1][x + 2]);
+        if (validMove(y + 1, x - 2)) controlledSquares.add(board[y + 1][x - 2]);
+        if (validMove(y - 1, x + 2)) controlledSquares.add(board[y - 1][x + 2]);
+        if (validMove(y - 1, x - 2)) controlledSquares.add(board[y - 1][x - 2]);
+
+        if (validMove(y + 2, x + 1)) controlledSquares.add(board[y + 2][x + 1]);
+        if (validMove(y + 2, x - 1)) controlledSquares.add(board[y + 2][x - 1]);
+        if (validMove(y - 2, x + 1)) controlledSquares.add(board[y - 2][x + 1]);
+        if (validMove(y - 2, x - 1)) controlledSquares.add(board[y - 2][x - 1]);
+
+        System.out.println("done");
+        
+        return controlledSquares;
     }
     
+    public boolean validMove (int x, int y) {
+        if (x >= 0 && x <=7 && y >= 0 && y <=7) {
+            //if (board[x][y].getCurrPiece())
+            System.out.println("Possible: " + x + " " + y);
+            return true;
+        }
 
-    //TO BE IMPLEMENTED!
+        return false;
+    }
+
+    //FINISHED
     //implement the move function here
     //it's up to you how the piece moves, but at the very least the rules should be logical and it should never move off the board!
     //returns an arraylist of squares which are legal to move to
     //please note that your piece must have some sort of logic. Just being able to move to every square on the board is not
     //going to score any points.
     public ArrayList<Square> getLegalMoves(Board b, Square start){
-    	return null;
+    	return getControlledSquares(b.getSquareArray(), start);
     }
 }
