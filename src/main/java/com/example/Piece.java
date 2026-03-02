@@ -5,8 +5,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -55,31 +53,23 @@ public class Piece {
 
         ArrayList<Square> controlledSquares = new ArrayList<Square> ();
 
-        System.out.println("Original: " + x + " " + y);
+        int[] signs = {1, -1};
+        int[][] pairs = {{1, 2}, {2,1}};
 
-        if (validMove(y + 1, x + 2)) controlledSquares.add(board[y + 1][x + 2]);
-        if (validMove(y + 1, x - 2)) controlledSquares.add(board[y + 1][x - 2]);
-        if (validMove(y - 1, x + 2)) controlledSquares.add(board[y - 1][x + 2]);
-        if (validMove(y - 1, x - 2)) controlledSquares.add(board[y - 1][x - 2]);
+        for (int sign1 : signs) {
+            for (int sign2 : signs) {
+                for (int[] pair : pairs) {
+                    int newX = x + sign2 * pair[1];
+                    int newY = y + sign1 * pair[0];
 
-        if (validMove(y + 2, x + 1)) controlledSquares.add(board[y + 2][x + 1]);
-        if (validMove(y + 2, x - 1)) controlledSquares.add(board[y + 2][x - 1]);
-        if (validMove(y - 2, x + 1)) controlledSquares.add(board[y - 2][x + 1]);
-        if (validMove(y - 2, x - 1)) controlledSquares.add(board[y - 2][x - 1]);
-
-        System.out.println("done");
+                    if (newX >= 0 && newX <=7 && newY >= 0 && newY <=7) {
+                        controlledSquares.add(board[newY][newX]);
+                    }
+                }
+            }
+        }
         
         return controlledSquares;
-    }
-    
-    public boolean validMove (int x, int y) {
-        if (x >= 0 && x <=7 && y >= 0 && y <=7) {
-            //if (board[x][y].getCurrPiece())
-            System.out.println("Possible: " + x + " " + y);
-            return true;
-        }
-
-        return false;
     }
 
     //FINISHED
@@ -89,6 +79,17 @@ public class Piece {
     //please note that your piece must have some sort of logic. Just being able to move to every square on the board is not
     //going to score any points.
     public ArrayList<Square> getLegalMoves(Board b, Square start){
-    	return getControlledSquares(b.getSquareArray(), start);
+    	ArrayList<Square> controlled = getControlledSquares(b.getSquareArray(), start);
+        ArrayList<Square> valid = new ArrayList <Square> ();
+
+        for (int i = 0; i < controlled.size(); i ++) {
+            Square s = controlled.get(i);
+
+            if ((!s.isOccupied()) || (s.getOccupyingPiece().getColor() != this.color)) {
+                valid.add(s);
+            }
+        }
+
+        return valid;
     }
 }
