@@ -6,16 +6,14 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.net.URL;
-import java.awt.Toolkit;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
 
 //You will be implmenting a part of a function and a whole function in this document. Please follow the directions for the 
 //suggested order of completion that should make testing easier.
@@ -88,12 +86,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	// Board set up
     void initializePieces() {
     	// White pieces
-    	board[7][1].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
-        board[7][6].put(new Piece(true, RESOURCES_WKNIGHT_PNG));
+    	board[7][1].put(new Knight(true, RESOURCES_WKNIGHT_PNG));
+        board[7][6].put(new Knight(true, RESOURCES_WKNIGHT_PNG));
 
         // Black pieces
-        board[0][1].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
-        board[0][6].put(new Piece(false, RESOURCES_BKNIGHT_PNG));
+        board[0][1].put(new Knight(false, RESOURCES_BKNIGHT_PNG));
+        board[0][6].put(new Knight(false, RESOURCES_BKNIGHT_PNG));
     }
 
     public Square[][] getSquareArray() {
@@ -171,7 +169,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     public void mouseReleased(MouseEvent e) {
         Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
         
-        
         if (fromMoveSquare != null && currPiece != null) { // Move only to square if there actually is a square and the user is actually holding a piece
             if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) { // Move only if the end square can legally be moved to by the piece 
                 // Moves the piece
@@ -180,18 +177,18 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
                 // Changes the turn
                 whiteTurn = !whiteTurn;
-            }
-        }
 
-        // Unhides piece (for display if it wasn't moved)
-        fromMoveSquare.setDisplay(true);
-        currPiece = null;
+            }
+            // Unhides piece (for display if it wasn't moved)
+            fromMoveSquare.setDisplay(true);
+            currPiece = null;
+        }
 
         // Clear all previous indicators 
         for (Square[] row : board) {
             for (Square s : row) s.setBorder(null);
         }
-
+    
         repaint();
     }
 
