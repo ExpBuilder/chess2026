@@ -9,6 +9,13 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+// Joe Jiao
+// Knight
+/* The knight moves in the manner of an "L" shape, moving 
+one square on one axis and two squares on the other axis.
+The knight can jump over pieces of either color. However,
+the knight is still restricted to capturing pieces of only 
+the opposing king's color. */
 public class Knight extends Piece {
     public Knight(boolean isWhite, String img_file) {
         super(isWhite, img_file);
@@ -81,6 +88,10 @@ public class Knight extends Piece {
     }
 
     @Override public String toString() {
-        return "";
+        String placeholder = "This is a ";
+        if (this.getColor()) placeholder += "white knight";
+        else placeholder += "black knight";
+
+        return placeholder;
     }
 }
