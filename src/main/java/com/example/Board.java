@@ -230,6 +230,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     } else {
                         whiteTurn = !whiteTurn;
                         enPassantUpdate();
+
+                        // Promotion
+                        if (endSquare.getRow() == 0) endSquare.put(new Queen(true, RESOURCES_WQUEEN_PNG));
+                        if (endSquare.getRow() == 7) endSquare.put(new Queen(false, RESOURCES_BQUEEN_PNG));
                     }
                 } else {
                     // Moves the piece
@@ -245,6 +249,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                         enPassantUpdate();
                         
                         if (currPiece instanceof Pawn) {
+                            // En passant
                             int vertical = -1;
                             if (!whiteTurn) vertical = 1;
                             
@@ -253,6 +258,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                                     board[endSquare.getRow() + vertical][endSquare.getCol()].removePiece();
                                 }
                             }
+
+                            // Promotion
+                            if (endSquare.getRow() == 0) endSquare.put(new Queen(true, RESOURCES_WQUEEN_PNG));
+                            if (endSquare.getRow() == 7) endSquare.put(new Queen(false, RESOURCES_BQUEEN_PNG));
                         }
                     }
                 }
