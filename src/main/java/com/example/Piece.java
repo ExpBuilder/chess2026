@@ -56,4 +56,12 @@ public class Piece {
     public ArrayList<Square> getControlledSquares(Square[][] board, Square currentSquare) {
         return null;
     }
+
+    public void updateEnPassantStatus() {
+        // Does nothing
+    }
+
+    public int getEnPassantStatus() {
+        return 0;
+    }
 }

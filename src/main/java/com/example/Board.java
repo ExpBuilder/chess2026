@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.net.URL;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -51,8 +52,6 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     private int currX;
     private int currY;
     
-
-    
     public Board(GameWindow g) {
         this.g = g;
         board = new Square[8][8];
@@ -86,12 +85,31 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 	// Board set up
     void initializePieces() {
     	// White pieces
+        board[7][0].put(new Rook(true, RESOURCES_WROOK_PNG));
     	board[7][1].put(new Knight(true, RESOURCES_WKNIGHT_PNG));
+        board[7][2].put(new Bishop(true, RESOURCES_WBISHOP_PNG));
+        board[7][3].put(new Queen(true, RESOURCES_WQUEEN_PNG));
+        board[7][4].put(new King(true, RESOURCES_WKING_PNG));
+        board[7][5].put(new Bishop(true, RESOURCES_WBISHOP_PNG));
         board[7][6].put(new Knight(true, RESOURCES_WKNIGHT_PNG));
+        board[7][7].put(new Rook(true, RESOURCES_WROOK_PNG));
+        for (int i = 0; i < 8; i++) {
+            board[6][i].put(new Pawn(true, RESOURCES_WPAWN_PNG));
+        }
+
 
         // Black pieces
+        board[0][0].put(new Rook(false, RESOURCES_BROOK_PNG));
         board[0][1].put(new Knight(false, RESOURCES_BKNIGHT_PNG));
+        board[0][2].put(new Bishop(false, RESOURCES_BBISHOP_PNG));
+        board[0][3].put(new Queen(false, RESOURCES_BQUEEN_PNG));
+        board[0][4].put(new King(false, RESOURCES_BKING_PNG));
+        board[0][5].put(new Bishop(false, RESOURCES_BBISHOP_PNG));
         board[0][6].put(new Knight(false, RESOURCES_BKNIGHT_PNG));
+        board[0][7].put(new Rook(false, RESOURCES_BROOK_PNG));
+        for (int i = 0; i < 8; i++) {
+            board[1][i].put(new Pawn(false, RESOURCES_BPAWN_PNG));
+        }
     }
 
     public Square[][] getSquareArray() {
@@ -108,6 +126,33 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
     public Piece getCurrPiece() {
         return this.currPiece;
+    }
+
+    public boolean isInCheck() {
+        boolean isInCheck = false;
+
+        for (int r = 0; r < 8; r++){
+            for (int c = 0; c < 8; c++) {
+                Square s = board[r][c];
+
+                if (s.isOccupied()) {
+                    Piece p = s.getOccupyingPiece();
+                    ArrayList<Square> controlled = p.getControlledSquares(board, s);
+
+                    if (p.getColor() != whiteTurn){
+                        for (int i = 0; i < controlled.size(); i++) {
+                            Square s2 = controlled.get(i);
+
+                            if (s2.isOccupied() && (s2.getOccupyingPiece() instanceof King) && (s2.getOccupyingPiece().getColor() == whiteTurn)) {
+                                isInCheck = true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return isInCheck;
     }
 
     @Override
@@ -171,13 +216,46 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         
         if (fromMoveSquare != null && currPiece != null) { // Move only to square if there actually is a square and the user is actually holding a piece
             if (currPiece.getLegalMoves(this, fromMoveSquare).contains(endSquare)) { // Move only if the end square can legally be moved to by the piece 
-                // Moves the piece
-                endSquare.put(currPiece);
-                fromMoveSquare.removePiece();
+                if (endSquare.isOccupied()) {
+                    Piece p = endSquare.getOccupyingPiece();
 
-                // Changes the turn
-                whiteTurn = !whiteTurn;
+                    // Moves the piece
+                    endSquare.put(currPiece);
+                    fromMoveSquare.removePiece();
 
+                    if (isInCheck()) {
+                        fromMoveSquare.put(currPiece);
+                        endSquare.put(p);
+
+                    } else {
+                        whiteTurn = !whiteTurn;
+                        enPassantUpdate();
+                    }
+                } else {
+                    // Moves the piece
+                    endSquare.put(currPiece);
+                    fromMoveSquare.removePiece();
+
+                    if (isInCheck()) {
+                        fromMoveSquare.put(currPiece);
+                        endSquare.removePiece();
+                    }
+                    else {
+                        whiteTurn = !whiteTurn;
+                        enPassantUpdate();
+                        
+                        if (currPiece instanceof Pawn) {
+                            int vertical = -1;
+                            if (!whiteTurn) vertical = 1;
+                            
+                            if (board[endSquare.getRow() + vertical][endSquare.getCol()].isOccupied()){
+                                if (board[endSquare.getRow() + vertical][endSquare.getCol()].getOccupyingPiece() instanceof Pawn) {
+                                    board[endSquare.getRow() + vertical][endSquare.getCol()].removePiece();
+                                }
+                            }
+                        }
+                    }
+                }
             }
             // Unhides piece (for display if it wasn't moved)
             fromMoveSquare.setDisplay(true);
@@ -190,6 +268,16 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         }
     
         repaint();
+    }
+
+    public void enPassantUpdate () {
+        for (Square[] r : board) {
+            for (Square c : r) {
+                if (c.isOccupied()) {
+                    c.getOccupyingPiece().updateEnPassantStatus();
+                }
+            }
+        }
     }
 
     @Override
