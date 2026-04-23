@@ -233,67 +233,64 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                     endSquare.put(currPiece);
                     fromMoveSquare.removePiece();
 
-                    // Castling
-                    if (currPiece instanceof King) {
-                        if (currPiece.hasPieceMoved() == false) {
-                            if (endSquare.getCol() == 6) {
-                                if (!isInCheck()) {
-                                    /*if(board[7][5].isOccupied()== false){
-                                        board[7][5].put(currPiece);
-                                        fromMoveSquare.removePiece();
-                                        if(isInCheck()){
-                                           //undo and return  
-                                        }
-                                    }*/
-                                    //do it again for 7/6
-                                    int row = 0;
-                                    if (whiteTurn) row = 7;
-
-                                    board[row][5].put(currPiece);
-                                    fromMoveSquare.removePiece();
-                                    if (isInCheck()) {
-                                        board[row][5].removePiece();
-                                        fromMoveSquare.put(currPiece);
-                                        endSquare.removePiece();
-                                        whiteTurn = !whiteTurn;
-                                    } else {
-                                        board[row][5].removePiece();
-
-                                        board[row][5].put(board[row][7].getOccupyingPiece());
-                                        board[row][7].removePiece();
-                                    }
-                                }
-                            } else if (endSquare.getCol() == 2) {
-                                if (!isInCheck()) {
-                                    int row = 0;
-                                    if (whiteTurn) row = 7;
-
-                                    board[row][3].put(currPiece);
-                                    fromMoveSquare.removePiece();
-                                    if (isInCheck()) {
-                                        board[row][3].removePiece();
-                                        fromMoveSquare.put(currPiece);
-                                        endSquare.removePiece();
-                                        whiteTurn = !whiteTurn;
-                                    } else {
-                                        board[row][3].removePiece();
-
-                                        board[row][3].put(board[row][0].getOccupyingPiece());
-                                        board[row][0].removePiece();
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                     if (isInCheck()) {
                         fromMoveSquare.put(currPiece);
                         endSquare.removePiece();
                     } else {
-                        if (currPiece instanceof Pawn) {
+                        // Castling
+                        if (currPiece instanceof King) {
+                            if (currPiece.hasPieceMoved() == false) {
+                                if (endSquare.getCol() == 6) {
+                                    if (!isInCheck()) {
+                                        int row = 0;
+                                        if (whiteTurn)
+                                            row = 7;
+
+                                        board[row][5].put(currPiece);
+                                        fromMoveSquare.removePiece();
+                                        if (isInCheck()) {
+                                            board[row][5].removePiece();
+                                            fromMoveSquare.put(currPiece);
+                                            endSquare.removePiece();
+                                        } else {
+                                            board[row][5].removePiece();
+
+                                            board[row][5].put(board[row][7].getOccupyingPiece());
+                                            board[row][7].removePiece();
+
+                                            endTurnStuff(endSquare);
+                                        }
+                                    }
+                                } else if (endSquare.getCol() == 2) {
+                                    if (!isInCheck()) {
+                                        int row = 0;
+                                        if (whiteTurn)
+                                            row = 7;
+
+                                        board[row][3].put(currPiece);
+                                        fromMoveSquare.removePiece();
+                                        if (isInCheck()) {
+                                            board[row][3].removePiece();
+                                            fromMoveSquare.put(currPiece);
+                                            endSquare.removePiece();
+                                            whiteTurn = !whiteTurn;
+                                        } else {
+                                            board[row][3].removePiece();
+
+                                            board[row][3].put(board[row][0].getOccupyingPiece());
+                                            board[row][0].removePiece();
+
+                                            endTurnStuff(endSquare);
+                                        }
+                                    }
+                                }
+                            }
+                        } else if (currPiece instanceof Pawn) {
+
                             // En passant
                             int vertical = -1;
-                            if (whiteTurn) vertical = 1;
+                            if (whiteTurn)
+                                vertical = 1;
 
                             if (board[endSquare.getRow() + vertical][endSquare.getCol()].isOccupied()) {
                                 if (board[endSquare.getRow() + vertical][endSquare.getCol()]
@@ -301,9 +298,11 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
                                     board[endSquare.getRow() + vertical][endSquare.getCol()].removePiece();
                                 }
                             }
+                            
+                            endTurnStuff(endSquare);
+                        } else {
+                            endTurnStuff(endSquare);
                         }
-
-                        endTurnStuff(endSquare);
                     }
                 }
             }
@@ -325,7 +324,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         whiteTurn = !whiteTurn;
 
         enPassantUpdate();
-        
+
         // Promotion
         if (currPiece instanceof Pawn) {
             if (endSquare.getRow() == 0)
@@ -338,7 +337,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         if (currPiece instanceof King || currPiece instanceof Rook) {
             currPiece.setMoveStatus(true);
         }
-        
+
     }
 
     public void enPassantUpdate() {
