@@ -16,7 +16,6 @@ import javax.imageio.ImageIO;
 
 //you will need to implement two functions in this file.
 public class Rook extends Piece {
-    
     public Rook(boolean isWhite, String img_file) {  
         super(isWhite, img_file);
     }
@@ -28,7 +27,6 @@ public class Rook extends Piece {
             return "I am the rook, and I am black";
     }
 
-    
 
     // TO BE IMPLEMENTED!
     //return a list of every square that is "controlled" by this piece. A square is controlled

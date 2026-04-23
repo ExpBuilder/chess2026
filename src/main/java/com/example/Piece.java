@@ -3,15 +3,17 @@ package com.example;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
 import javax.imageio.ImageIO;
-import java.io.File;
 
 public class Piece {
     private boolean color;
     private BufferedImage img;
+
+    private boolean hasMoved;
 
     public Piece(boolean color, String img_file) {
         this.color = color;
@@ -23,6 +25,16 @@ public class Piece {
         } catch (IOException e) {
             System.out.println("File not found: " + e.getMessage());
         }
+
+        hasMoved = false;
+    }
+
+    public boolean hasPieceMoved() {
+        return hasMoved;
+    }
+
+    public void setMoveStatus(boolean bool) {
+        hasMoved = bool;
     }
 
     public boolean getColor() {

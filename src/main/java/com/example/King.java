@@ -29,61 +29,92 @@ public class King extends Piece {
 		Square[][] board = b.getSquareArray();
 		int row = currentSquare.getRow();
 		int col = currentSquare.getCol();
-		
-		//left
+
+		// left
 		if (col > 0) {
-			if (!board[row][col-1].isOccupied() || board[row][col -1].getOccupyingPiece().getColor() != this.getColor()) {
-				legalMoves.add(board[row][col-1]);
+			if (!board[row][col - 1].isOccupied()
+					|| board[row][col - 1].getOccupyingPiece().getColor() != this.getColor()) {
+				legalMoves.add(board[row][col - 1]);
 			}
-			//left up
+			// left up
 			if (row > 0) {
-				if (!board[row -1 ][col -1].isOccupied()
+				if (!board[row - 1][col - 1].isOccupied()
 						|| board[row - 1][col - 1].getOccupyingPiece().getColor() != this.getColor()) {
 					legalMoves.add(board[row - 1][col - 1]);
 				}
 			}
-			//left down
-			if (row < board.length-1) {
-				if (!board[row+1][col-1].isOccupied()
-						|| board[row+1][col-1].getOccupyingPiece().getColor() != this.getColor()) {
-					legalMoves.add(board[row+1][col-1]);
+			// left down
+			if (row < board.length - 1) {
+				if (!board[row + 1][col - 1].isOccupied()
+						|| board[row + 1][col - 1].getOccupyingPiece().getColor() != this.getColor()) {
+					legalMoves.add(board[row + 1][col - 1]);
 				}
 			}
 		}
-		//up
+		// up
 		if (row > 0) {
-			if (!board[row-1][col].isOccupied() || board[row-1][col].getOccupyingPiece().getColor() != this.getColor()) {
+			if (!board[row - 1][col].isOccupied()
+					|| board[row - 1][col].getOccupyingPiece().getColor() != this.getColor()) {
 				legalMoves.add(board[row - 1][col]);
 			}
 		}
-		//down
+		// down
 		if (row < board.length - 1) {
-			if (!board[row +1][col].isOccupied()
-					|| board[row+1][col].getOccupyingPiece().getColor() != this.getColor()) {
-				legalMoves.add(board[row+1][col]);
+			if (!board[row + 1][col].isOccupied()
+					|| board[row + 1][col].getOccupyingPiece().getColor() != this.getColor()) {
+				legalMoves.add(board[row + 1][col]);
 			}
 		}
-		//right
-		if (col < board[row].length-1) {
-			if (!board[row][col+1].isOccupied() || board[row][col+1].getOccupyingPiece().getColor() != this.getColor()) {
-				legalMoves.add(board[row][col+1]);
+		// right
+		if (col < board[row].length - 1) {
+			if (!board[row][col + 1].isOccupied()
+					|| board[row][col + 1].getOccupyingPiece().getColor() != this.getColor()) {
+				legalMoves.add(board[row][col + 1]);
 			}
-			//right up
+			// right up
 			if (row > 0) {
 
-				if (!board[row-1][col+ 1].isOccupied()
-						|| board[row-1][col+1].getOccupyingPiece().getColor() != this.getColor()) {
-					legalMoves.add(board[row-1][col+1]);
+				if (!board[row - 1][col + 1].isOccupied()
+						|| board[row - 1][col + 1].getOccupyingPiece().getColor() != this.getColor()) {
+					legalMoves.add(board[row - 1][col + 1]);
 				}
 			}
-			//right down
-			if (row < board.length -1) {
-				if (!board[row+1][col + 1].isOccupied()
+			// right down
+			if (row < board.length - 1) {
+				if (!board[row + 1][col + 1].isOccupied()
 						|| board[row + 1][col + 1].getOccupyingPiece().getColor() != this.getColor()) {
 					legalMoves.add(board[row + 1][col + 1]);
 				}
 
 			}
+		}
+
+		// Castling
+		if (this.hasPieceMoved() == false) {
+			boolean canCastle = true;
+			int currRow = 0;
+			if (this.getColor())
+				currRow = 7;
+
+			// Castle right
+			if (board[currRow][5].isOccupied() || board[currRow][6].isOccupied())
+				canCastle = false;
+			if (board[currRow][7].isOccupied() && (board[currRow][7].getOccupyingPiece() instanceof Rook)
+					&& (board[currRow][7].getOccupyingPiece().hasPieceMoved() == false)) {
+				if (canCastle) {
+					legalMoves.add(board[currRow][6]);
+				}
+			}
+
+			// Castle left
+			canCastle = true;
+			if (board[currRow][1].isOccupied() || board[currRow][2].isOccupied() || board[currRow][3].isOccupied())
+				canCastle = false;
+			if (board[currRow][0].isOccupied() && (board[currRow][0].getOccupyingPiece() instanceof Rook)
+					&& (board[currRow][0].getOccupyingPiece().hasPieceMoved() == false)) {
+				legalMoves.add(board[currRow][2]);
+			}
+
 		}
 
 		return legalMoves;
